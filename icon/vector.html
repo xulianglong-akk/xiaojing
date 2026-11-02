@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<body>
+<script>
+window.renderVector = async function () {
+  const svg = await (await fetch('icon-vector.svg')).text()
+  const blob = new Blob([svg], { type: 'image/svg+xml' })
+  const url = URL.createObjectURL(blob)
+  const img = new Image()
+  await new Promise((res, rej) => {
+    img.onload = res
+    img.onerror = rej
+    img.src = url
+  })
+  const out = {}
+  for (const size of [16, 32, 48, 64, 128, 256, 512, 1024]) {
+    const ss = size * 2 // 矢量也超采一轮，规避浏览器光栅化的小字号偏差
+    const big = document.createElement('canvas')
+    big.width = big.height = ss
+    const bctx = big.getContext('2d')
+    bctx.imageSmoothingQuality = 'high'
+    bctx.drawImage(img, 0, 0, ss, ss)
+    const fin = document.createElement('canvas')
+    fin.width = fin.height = size
+    const fctx = fin.getContext('2d')
+    fctx.imageSmoothingQuality = 'high'
+    fctx.drawImage(big, 0, 0, ss, ss, 0, 0, size, size)
+    out[size] = fin.toDataURL('image/png')
+  }
+  URL.revokeObjectURL(url)
+  return out
+}
+</script>
+</body>
+</html>

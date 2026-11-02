@@ -1,0 +1,54 @@
+{
+  "name": "xiaojing",
+  "version": "0.3.0",
+  "description": "小镜 (XiaoJing) — 极简、隐私优先的 AI 助手桌面应用",
+  "main": "out/main/index.js",
+  "author": "XiaoJing",
+  "private": true,
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "start": "electron-vite preview",
+    "dist": "electron-vite build && electron-builder --win nsis"
+  },
+  "dependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "electron": "^45.0.0",
+    "electron-builder": "^26.15.3",
+    "electron-vite": "^6.0.0",
+    "png-to-ico": "^3.0.2",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5"
+  },
+  "build": {
+    "appId": "com.xiaojing.app",
+    "productName": "XiaoJing",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "out/**/*"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    }
+  },
+  "allowScripts": {
+    "electron@45.0.0": true
+  }
+}
