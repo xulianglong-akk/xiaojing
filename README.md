@@ -6,6 +6,44 @@
 
 ---
 
+## 下载即用
+
+1. 打开 [Releases](https://github.com/xulianglong-akk/xiaojing/releases/latest)，下载最新的 `XiaoJing-*-win-x64.zip`
+2. 解压到任意目录，运行 `XiaoJing.exe`
+3. 免安装、不写注册表。首次启动会自动创建数据目录，默认 `D:\小镜数据`（没有 D 盘时用「文档\小镜数据」），可在「设置 → 数据」里迁移
+
+> 应用未做代码签名，Windows SmartScreen 可能提示「未知发布者」，点「更多信息 → 仍要运行」即可。
+
+系统要求：Windows 10 / 11 x64。只用云端模型没有额外硬件要求；跑本地模型建议 8GB 以上显存、16GB 以上内存。
+
+## 第一次使用
+
+小镜不预置任何 API Key，启动后先配置一个可用模型。
+
+**用云端模型**
+
+1. 打开「设置 → 模型」→「＋ 添加模型」
+2. 选厂商（OpenAI / Anthropic / DeepSeek / GLM / Kimi / OpenRouter），或选「自定义」填一个 OpenAI 兼容端点
+3. 填 API Key，保存后会自动拉取该厂商的模型列表
+4. 回到聊天页，在输入区右下角选模型即可
+
+API Key 用 Windows DPAPI 加密保存在本机，明文不落盘。
+
+**用本地 Ollama**
+
+1. 安装 [Ollama](https://ollama.com)，至少拉一个模型，例如 `ollama pull qwen3:8b`
+2. 在「设置 → 本地模型」确认程序目录（默认 `E:\ollama`，按实际安装位置改）
+3. 小镜启动时会自动检查并拉起 Ollama，退出时一并关闭；已经在跑的不会重复启动
+4. 聊天页模型选择器里选本地模型即可，对话全程不出网
+
+**可选：本地生成**
+
+生图 / 生视频 / 生音乐需要自备 [ComfyUI](https://github.com/comfyanonymous/ComfyUI) 便携版和对应模型文件。在「设置 → 生图视频」填 ComfyUI 根目录（含 `run_nvidia_gpu.bat`），模型文件就绪后对应选项才会出现。
+
+**可选：联网搜索**
+
+聊天输入区的 🌐 开关，无需配置 Key，走 DuckDuckGo，失败自动回落 Bing。
+
 ## 它能做什么
 
 **聊天**
@@ -26,8 +64,6 @@
 **文件操作（Codex 式）**
 指定一个工作目录，让它读文件、改文件、跑命令。三种权限：只读 / 改动前问我 / 完全访问。改之前会先给你看计划。
 
----
-
 ## 技术栈
 
 | 层 | 用的什么 |
@@ -38,7 +74,7 @@
 | 本地模型 | Ollama（对话 / 视觉 / 压缩） |
 | 生成 | ComfyUI（图像 / 视频 / 音频） |
 
-## 跑起来
+## 从源码运行
 
 ```bash
 npm install
@@ -47,14 +83,22 @@ npm run build    # 只构建前端产物
 npm run dist     # 打 Windows 安装包（NSIS）
 ```
 
-首次启动会让你指定一个数据目录，之后记在 `%APPDATA%\XiaoJing\config\dataDir.txt`。聊天记录、生成的图片视频、角色卡的长期记忆都放在那儿。
+用 Node.js 22+（本项目在 Node 24 下开发）。
 
-本地服务（Ollama、ComfyUI）小镜会在启动时检查并自动拉起，退出时一并关掉；已经在跑的直接复用。路径在设置里可以改。
+## 数据与隐私
 
-## 隐私
+- 聊天记录、机器人、长期记忆、生成的图片 / 视频 / 音乐都是数据目录下的明文 JSON 或文件，随时可以打包带走
+- 不埋点、不上报、没有自有服务器
+- API Key 用系统级加密（DPAPI）保存，明文不落盘
+- 出网只发生在调用你配置的模型 API、联网搜索，以及你主动发起的其他请求
+- 「设置 → 数据」支持一键导出全部数据，也可以彻底删除
 
-见 [PRIVACY.md](PRIVACY.md)。简单说：不埋点、不上报、没有自有服务器，API Key 用系统级加密（DPAPI）存，明文不落盘。
+详见 [PRIVACY.md](PRIVACY.md)。
 
 ## 目前只支持 Windows
 
 打包目标是 Windows x64。Electron 本身跨平台，但本地服务的启动逻辑、路径处理和窗口行为都是按 Windows 写的。
+
+## 许可证
+
+[MIT](LICENSE)
